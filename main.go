@@ -5,15 +5,42 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"price-tracker/price_tracker"
+	"os"
+
+	interfaces "price-tracker/interface"
+	price_tracker "price-tracker/price_tracker"
 )
 
 func main() {
-	price_tracker1 := price_tracker.GetPriceTracker("Asics jakna", "https://www.sportvision.rs/jakna/70013410-asics-icon-jacket")
+	// get file linkes_for_scrape.json from root folder
+	// get all items from file
+	// create all factories
+	file, err := os.Open("items_for_scrape.json")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1);
+	}
 
-	price_tracker2 := price_tracker.GetPriceTracker("Adidas Soulstride", "https://planetasport.rs/patike-terrex-soulstride-r-rdy-m-ig8029.html")
+	defer file.Close()
 
-	fmt.Println(price_tracker1)
-	fmt.Println(price_tracker2)	
+	var products []interfaces.ItemForScrape
+
+	decoder := json.NewDecoder(file)
+
+	err = decoder.Decode(&products)
+	if err != nil {
+			fmt.Println("Error decoding JSON:", err)
+			os.Exit(1)
+	}
+
+	for _, product := range products {
+		priceTracker, err := price_tracker.GetPriceTracker(product.Name, product.Url)
+		if err != nil {
+			fmt.Println("Failed to get price tracker for", product.Name, ":", err)
+			continue
+		}
+		fmt.Println(priceTracker)
+	}
 }
