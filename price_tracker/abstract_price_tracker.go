@@ -26,11 +26,6 @@ func NewAbstractPriceTracker(itemName string, url string, priceFields []string) 
 	}
 }
 
-
-func (pt *AbstractPriceTracker) GetName() string {
-	return pt.name
-}
-
 func (pt *AbstractPriceTracker) GetPrice() float64 {
 	return pt.price
 }

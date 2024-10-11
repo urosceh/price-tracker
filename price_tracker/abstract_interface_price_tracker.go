@@ -6,9 +6,8 @@ import (
 )
 
 type IPriceTracker interface {
-	GetName() string
-	GetPrice() float64
 	GetUrl() string
+	GetPrice() float64
 }
 
 func GetPriceTracker(name string, url string) (IPriceTracker, error) {
