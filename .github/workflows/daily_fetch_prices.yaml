@@ -18,10 +18,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download previous price data
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: prices-file
           path: ./prices.json
@@ -46,7 +46,7 @@ jobs:
         run: go run .
 
       - name: Upload new price data
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: prices-file
           path: ./prices.json
