@@ -25,7 +25,17 @@ jobs:
         with:
           name: prices-file
           path: ./prices.json
-          if-no-files-found: ignore
+        continue-on-error: true
+
+      - name: Check if prices.json error is because it doesn't exist
+        run: |
+          if [ -f ./prices.json ]; then
+            echo "prices.json exists. Exiting workflow."
+            exit 1 
+          else
+            echo "prices.json does not exist, creating a new one."
+            echo '{}' > ./prices.json
+          fi
 
       - name: Setup Go
         uses: actions/setup-go@v4
