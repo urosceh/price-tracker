@@ -49,19 +49,16 @@ func getItemsForScrape() []interfaces.ItemForScrape {
 func getScrapedItemEntriesMap(filePath string, itemsForScrape []interfaces.ItemForScrape) map[string][]interfaces.ScrapedItemEntry {
 	scrapedItemEntriesMap := loadScrapedItemEntriesFromFile(filePath)
 
-	for _, item := range itemsForScrape {
-		priceTracker, err := price_tracker.GetPriceTracker(item.Name, item.Url)
+	priceTrackers := price_tracker.GetPriceTrackers(itemsForScrape)
 
-		if err != nil {
-			fmt.Println("Failed to get price tracker for", item.Name, ":", err)
-			continue
-		}
+	for _, priceTracker := range priceTrackers {
+		length := len(scrapedItemEntriesMap[priceTracker.GetUrl()])
 
-		if len(scrapedItemEntriesMap[priceTracker.GetUrl()]) >= 10 {
+		if length >= 10 {
 			scrapedItemEntriesMap[priceTracker.GetUrl()] = scrapedItemEntriesMap[priceTracker.GetUrl()][1:]
 		}
 
-		if (scrapedItemEntriesMap[priceTracker.GetUrl()][len(scrapedItemEntriesMap[priceTracker.GetUrl()])-1].Price != priceTracker.GetPrice()) {
+		if length == 0 || scrapedItemEntriesMap[priceTracker.GetUrl()][length-1].Price != priceTracker.GetPrice() {
 			scrapedItemEntriesMap[priceTracker.GetUrl()] = append(scrapedItemEntriesMap[priceTracker.GetUrl()], interfaces.ScrapedItemEntry{
 				ScrapedAt: time.Now().Format(time.RFC3339),
 				Price:     priceTracker.GetPrice(),
