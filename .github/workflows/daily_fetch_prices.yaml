@@ -62,14 +62,14 @@ jobs:
                 {
                   "to": [
                     {
-                      "email": "'${{ secrets.SENDGRID_TO_EMAIL }}'"
+                      "email": "${{ secrets.SENDGRID_TO_EMAIL }}"
                     }
                   ],
                   "subject": "Scraped Latest Price Data"
                 }
               ],
               "from": {
-                "email": "'${{ secrets.SENDGRID_FROM_EMAIL }}'"
+                "email": "${{ secrets.SENDGRID_FROM_EMAIL }}"
               },
               "content": [
                 {
