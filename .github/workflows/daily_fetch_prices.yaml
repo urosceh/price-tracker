@@ -58,33 +58,33 @@ jobs:
           curl --request POST \
             --url https://api.sendgrid.com/v3/mail/send \
             --header "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
-            --header 'Content-Type: application/json' \
-            --data '{
-              "personalizations": [
+            --header "Content-Type: application/json" \
+            --data "{
+              \"personalizations\": [
                 {
-                  "to": [
+                  \"to\": [
                     {
-                      "email": "${{ secrets.SENDGRID_TO_EMAIL }}"
+                      \"email\": \"${{ secrets.SENDGRID_TO_EMAIL }}\"
                     }
                   ],
-                  "subject": "Scraped Latest Price Data"
+                  \"subject\": \"Scraped Latest Price Data\"
                 }
               ],
-              "from": {
-                "email": "${{ secrets.SENDGRID_FROM_EMAIL }}"
+              \"from\": {
+                \"email\": \"${{ secrets.SENDGRID_FROM_EMAIL }}\"
               },
-              "content": [
+              \"content\": [
                 {
-                  "type": "text/plain",
-                  "value": "Attached is the latest prices.json file."
+                  \"type\": \"text/plain\",
+                  \"value\": \"Attached is the latest prices.json file.\"
                 }
               ],
-              "attachments": [
+              \"attachments\": [
                 {
-                  "content": "'$(base64 ./prices.json)'",
-                  "filename": "prices.json",
-                  "type": "application/json",
-                  "disposition": "attachment"
+                  \"content\": \"$(base64 ./prices.json)\",
+                  \"filename\": \"prices.json\",
+                  \"type\": \"application/json\",
+                  \"disposition\": \"attachment\"
                 }
               ]
-            }'
+            }"
