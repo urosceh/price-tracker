@@ -20,6 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # TODO -> download the artifact whose id is saved in a variable (secret)
       # - name: Download previous price data
       #   uses: actions/download-artifact@v4
       #   with:
@@ -27,7 +28,8 @@ jobs:
       #     path: ./prices.json
       #   continue-on-error: true
 
-      - name: Check if prices.json error is because it doesn't exist
+      # TODO -> remove once the above step is implemented
+      - name: Create empty prices.json file
         run: |
             echo "creating prices.json file"
             echo '{}' > ./prices.json
@@ -40,55 +42,12 @@ jobs:
       - name: Run Go application
         run: go run .
 
+      # TODO -> can you save artifact id in a variable (secret) and use it in the next workflow
       # - name: Upload new price data
       #   uses: actions/upload-artifact@v4
       #   with:
       #     name: prices-file
       #     path: ./prices.json
-
-      # - name: Echo SendGrid Request Body
-      #   run: |
-      #     echo " { \"personalizations\": [ { \"to\": [ { \"email\": \"${{ secrets.SENDGRID_TO_EMAIL }}\" } ], \"subject\": \"Scraped Latest Price Data\" } ], \"from\": { \"email\": \"${{ secrets.SENDGRID_FROM_EMAIL }}\" }, \"content\": [ { \"type\": \"text/plain\", \"value\": \"Attached is the latest prices.json file.\" } ], \"attachments\": [ { \"content\": \"$(base64 ./prices.json)\", \"filename\": \"prices.json\", \"type\": \"application/json\", \"disposition\": \"attachment\" } ] }"
-
-      # - name: Display Secret
-      #   run: echo "${{ secrets.YOUR_SECRET_NAME }}"
-
-      - name: Send email with prices.json attachment
-        continue-on-error: true
-        run: |
-          curl --request POST \
-            --url https://api.sendgrid.com/v3/mail/send \
-            --header "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
-            --header "Content-Type: application/json" \
-            --data "{
-              \"personalizations\": [
-                {
-                  \"to\": [
-                    {
-                      \"email\": \"${{ secrets.SENDGRID_TO_EMAIL }}\"
-                    }
-                  ],
-                  \"subject\": \"Scraped Latest Price Data\"
-                }
-              ],
-              \"from\": {
-                \"email\": \"${{ secrets.SENDGRID_FROM_EMAIL }}\"
-              },
-              \"content\": [
-                {
-                  \"type\": \"text/plain\",
-                  \"value\": \"Attached is the latest prices.json file.\"
-                }
-              ],
-              \"attachments\": [
-                {
-                  \"content\": \"$(base64 -w 0 ./prices.json)\",
-                  \"filename\": \"prices.json\",
-                  \"type\": \"application/json\",
-                  \"disposition\": \"attachment\"
-                }
-              ]
-            }"
 
       - name: Send email with prices.json attachment
         run: |
