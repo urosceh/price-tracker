@@ -51,6 +51,13 @@ jobs:
           name: prices-file
           path: ./prices.json
 
+      - name: Echo SendGrid Request Body
+        run: |
+          echo " { \"personalizations\": [ { \"to\": [ { \"email\": \"${{ secrets.SENDGRID_TO_EMAIL }}\" } ], \"subject\": \"Scraped Latest Price Data\" } ], \"from\": { \"email\": \"${{ secrets.SENDGRID_FROM_EMAIL }}\" }, \"content\": [ { \"type\": \"text/plain\", \"value\": \"Attached is the latest prices.json file.\" } ], \"attachments\": [ { \"content\": \"$(base64 ./prices.json)\", \"filename\": \"prices.json\", \"type\": \"application/json\", \"disposition\": \"attachment\" } ] }"
+
+      - name: Display Secret
+        run: echo "${{ secrets.YOUR_SECRET_NAME }}"
+
       - name: Send email with prices.json attachment
         run: |
           curl --request POST \
