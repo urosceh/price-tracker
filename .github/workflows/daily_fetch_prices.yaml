@@ -18,24 +18,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Download previous price data
-        uses: actions/download-artifact@v3
-        with:
-          name: prices-file
-          path: ./prices.json
-        continue-on-error: true
+      # TODO -> download the artifact whose id is saved in a variable (secret)
+      # - name: Download previous price data
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: prices-file
+      #     path: ./prices.json
+      #   continue-on-error: true
 
-      - name: Check if prices.json error is because it doesn't exist
+      # TODO -> remove once the above step is implemented
+      - name: Create empty prices.json file
         run: |
-          if [ -f ./prices.json ]; then
-            echo "prices.json exists. Exiting workflow."
-            exit 1 
-          else
-            echo "prices.json does not exist, creating a new one."
+            echo "creating prices.json file"
             echo '{}' > ./prices.json
-          fi
 
       - name: Setup Go
         uses: actions/setup-go@v4
@@ -45,11 +42,12 @@ jobs:
       - name: Run Go application
         run: go run .
 
-      - name: Upload new price data
-        uses: actions/upload-artifact@v3
-        with:
-          name: prices-file
-          path: ./prices.json
+      # TODO -> can you save artifact id in a variable (secret) and use it in the next workflow
+      # - name: Upload new price data
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: prices-file
+      #     path: ./prices.json
 
       - name: Send email with prices.json attachment
         run: |
@@ -62,14 +60,14 @@ jobs:
                 {
                   "to": [
                     {
-                      "email": "'"${{ secrets.SENDGRID_TO_EMAIL }}"'"
+                      "email": "${{ secrets.SENDGRID_TO_EMAIL }}"
                     }
                   ],
                   "subject": "Scraped Latest Price Data"
                 }
               ],
               "from": {
-                "email": "'"${{ secrets.SENDGRID_FROM_EMAIL }}"'"
+                "email": "${{ secrets.SENDGRID_FROM_EMAIL }}"
               },
               "content": [
                 {
@@ -79,7 +77,7 @@ jobs:
               ],
               "attachments": [
                 {
-                  "content": "'"$(base64 ./prices.json)"'",
+                  "content": "'$(base64 -w 0 ./prices.json)'",
                   "filename": "prices.json",
                   "type": "application/json",
                   "disposition": "attachment"
