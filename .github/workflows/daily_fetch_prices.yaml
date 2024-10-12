@@ -20,22 +20,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download previous price data
-        uses: actions/download-artifact@v4
-        with:
-          name: prices-file
-          path: ./prices.json
-        continue-on-error: true
+      # - name: Download previous price data
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: prices-file
+      #     path: ./prices.json
+      #   continue-on-error: true
 
-      - name: Check if prices.json error is because it doesn't exist
-        run: |
-          if [ -f ./prices.json ]; then
-            echo "prices.json exists. Exiting workflow."
-            exit 1 
-          else
-            echo "prices.json does not exist, creating a new one."
-            echo '{}' > ./prices.json
-          fi
+      # - name: Check if prices.json error is because it doesn't exist
+      #   run: |
+      #     if [ -f ./prices.json ]; then
+      #       echo "prices.json exists. Exiting workflow."
+      #       exit 1 
+      #     else
+      #       echo "prices.json does not exist, creating a new one."
+      #       echo '{}' > ./prices.json
+      #     fi
 
       - name: Setup Go
         uses: actions/setup-go@v4
@@ -45,18 +45,18 @@ jobs:
       - name: Run Go application
         run: go run .
 
-      - name: Upload new price data
-        uses: actions/upload-artifact@v4
-        with:
-          name: prices-file
-          path: ./prices.json
+      # - name: Upload new price data
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: prices-file
+      #     path: ./prices.json
 
-      - name: Echo SendGrid Request Body
-        run: |
-          echo " { \"personalizations\": [ { \"to\": [ { \"email\": \"${{ secrets.SENDGRID_TO_EMAIL }}\" } ], \"subject\": \"Scraped Latest Price Data\" } ], \"from\": { \"email\": \"${{ secrets.SENDGRID_FROM_EMAIL }}\" }, \"content\": [ { \"type\": \"text/plain\", \"value\": \"Attached is the latest prices.json file.\" } ], \"attachments\": [ { \"content\": \"$(base64 ./prices.json)\", \"filename\": \"prices.json\", \"type\": \"application/json\", \"disposition\": \"attachment\" } ] }"
+      # - name: Echo SendGrid Request Body
+      #   run: |
+      #     echo " { \"personalizations\": [ { \"to\": [ { \"email\": \"${{ secrets.SENDGRID_TO_EMAIL }}\" } ], \"subject\": \"Scraped Latest Price Data\" } ], \"from\": { \"email\": \"${{ secrets.SENDGRID_FROM_EMAIL }}\" }, \"content\": [ { \"type\": \"text/plain\", \"value\": \"Attached is the latest prices.json file.\" } ], \"attachments\": [ { \"content\": \"$(base64 ./prices.json)\", \"filename\": \"prices.json\", \"type\": \"application/json\", \"disposition\": \"attachment\" } ] }"
 
-      - name: Display Secret
-        run: echo "${{ secrets.YOUR_SECRET_NAME }}"
+      # - name: Display Secret
+      #   run: echo "${{ secrets.YOUR_SECRET_NAME }}"
 
       - name: Send email with prices.json attachment
         run: |
