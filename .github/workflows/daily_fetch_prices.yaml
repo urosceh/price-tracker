@@ -72,15 +72,7 @@ jobs:
               "content": [
                 {
                   "type": "text/plain",
-                  "value": "Attached is the latest prices.json file."
+                  "value": "'$(cat ./prices.json)'"
                 }
               ],
-              "attachments": [
-                {
-                  "content": "'$(base64 -w 0 ./prices.json)'",
-                  "filename": "prices.json",
-                  "type": "application/json",
-                  "disposition": "attachment"
-                }
-              ]
             }'
