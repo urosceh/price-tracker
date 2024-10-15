@@ -50,6 +50,7 @@ jobs:
       #     path: ./prices.json
 
       - name: Send email with prices.json attachment
+        continue-on-error: true
         run: |
           curl --request POST \
             --url https://api.sendgrid.com/v3/mail/send \
@@ -72,15 +73,94 @@ jobs:
               "content": [
                 {
                   "type": "text/plain",
-                  "value": "Attached is the latest prices.json file."
+                  "value": "'$(jq -Rs . < prices.json)'"
                 }
               ],
-              "attachments": [
+            }'
+
+      - name: Send email with prices.json attachment
+        continue-on-error: true
+        run: |
+          curl --request POST \
+            --url https://api.sendgrid.com/v3/mail/send \
+            --header "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "personalizations": [
                 {
-                  "content": "'$(base64 -w 0 ./prices.json)'",
-                  "filename": "prices.json",
-                  "type": "application/json",
-                  "disposition": "attachment"
+                  "to": [
+                    {
+                      "email": "${{ secrets.SENDGRID_TO_EMAIL }}"
+                    }
+                  ],
+                  "subject": "Scraped Latest Price Data"
                 }
-              ]
+              ],
+              "from": {
+                "email": "${{ secrets.SENDGRID_FROM_EMAIL }}"
+              },
+              "content": [
+                {
+                  "type": "text/plain",
+                  "value": "'$(jq -Rs . prices.json)'"
+                }
+              ],
+            }'
+
+      - name: Send email with prices.json attachment
+        continue-on-error: true
+        run: |
+          curl --request POST \
+            --url https://api.sendgrid.com/v3/mail/send \
+            --header "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "personalizations": [
+                {
+                  "to": [
+                    {
+                      "email": "${{ secrets.SENDGRID_TO_EMAIL }}"
+                    }
+                  ],
+                  "subject": "Scraped Latest Price Data"
+                }
+              ],
+              "from": {
+                "email": "${{ secrets.SENDGRID_FROM_EMAIL }}"
+              },
+              "content": [
+                {
+                  "type": "application/json",
+                  "value": "'$(jq -c . prices.json)'"
+                }
+              ],
+            }'
+
+      - name: Send email with prices.json attachment
+        continue-on-error: true
+        run: |
+          curl --request POST \
+            --url https://api.sendgrid.com/v3/mail/send \
+            --header "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "personalizations": [
+                {
+                  "to": [
+                    {
+                      "email": "${{ secrets.SENDGRID_TO_EMAIL }}"
+                    }
+                  ],
+                  "subject": "Scraped Latest Price Data"
+                }
+              ],
+              "from": {
+                "email": "${{ secrets.SENDGRID_FROM_EMAIL }}"
+              },
+              "content": [
+                {
+                  "type": "application/json",
+                  "value": "'$(jq -c . < prices.json)'"
+                }
+              ],
             }'
