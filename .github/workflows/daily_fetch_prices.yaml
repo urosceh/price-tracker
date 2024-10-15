@@ -73,7 +73,36 @@ jobs:
               "content": [
                 {
                   "type": "text/plain",
-                  "value": "'$(jq ./prices.json)'"
+                  "value": "'$(jq -Rs . < prices.json)'"
+                }
+              ],
+            }'
+
+      - name: Send email with prices.json attachment
+        continue-on-error: true
+        run: |
+          curl --request POST \
+            --url https://api.sendgrid.com/v3/mail/send \
+            --header "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "personalizations": [
+                {
+                  "to": [
+                    {
+                      "email": "${{ secrets.SENDGRID_TO_EMAIL }}"
+                    }
+                  ],
+                  "subject": "Scraped Latest Price Data"
+                }
+              ],
+              "from": {
+                "email": "${{ secrets.SENDGRID_FROM_EMAIL }}"
+              },
+              "content": [
+                {
+                  "type": "text/plain",
+                  "value": "'$(jq -Rs . prices.json)'"
                 }
               ],
             }'
@@ -102,7 +131,36 @@ jobs:
               "content": [
                 {
                   "type": "application/json",
-                  "value": "'$(jq ./prices.json)'"
+                  "value": "'$(jq -c . prices.json)'"
+                }
+              ],
+            }'
+
+      - name: Send email with prices.json attachment
+        continue-on-error: true
+        run: |
+          curl --request POST \
+            --url https://api.sendgrid.com/v3/mail/send \
+            --header "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "personalizations": [
+                {
+                  "to": [
+                    {
+                      "email": "${{ secrets.SENDGRID_TO_EMAIL }}"
+                    }
+                  ],
+                  "subject": "Scraped Latest Price Data"
+                }
+              ],
+              "from": {
+                "email": "${{ secrets.SENDGRID_FROM_EMAIL }}"
+              },
+              "content": [
+                {
+                  "type": "application/json",
+                  "value": "'$(jq -c . < prices.json)'"
                 }
               ],
             }'
